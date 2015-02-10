@@ -2,38 +2,54 @@
 /*
 Plugin Name: phpactiverecords
 */
+//expose phpactive record class to global for other plugin using
+require_once QdPhpactiverecords::getPluginDirPath() . 'src/ActiveRecord.php';
 class QdPhpactiverecords
 {
     public function __construct()
     {
         //load active record
+        $this->init();
     }
-    public function getPluginDirPath()
+    public static function getPluginDirPath()
     {
         return plugin_dir_path( __FILE__ );
     }
-    public static function  getInstance()
+    private function init()
     {
 
     }
+    public static function getCon()
+    {
+        if(QdPhpactiverecords::$con==null)
+        {
+            QdPhpactiverecords::$con = array(
+                'development' => 'mysql://'.DB_USER.':'.DB_PASSWORD.'@'.DB_HOST.'/'.DB_NAME,
+                'production' => 'mysql://'.DB_USER.':'.DB_PASSWORD.'@'.DB_HOST.'/'.DB_NAME.'?charset=utf8'
+            );
+        }
+        return QdPhpactiverecords::$con;
+    }
+    public static $con = null;
 }
-$hgytfrd45xdse32n = new QdPhpactiverecords();
-//expose phpactive record class to global for other plugin using
-require_once $hgytfrd45xdse32n->getPluginDirPath() . 'src/ActiveRecord.php';
-$connections = array(
-    'development' => 'mysql://'.DB_USER.':'.DB_PASSWORD.'@'.DB_HOST.'/'.DB_NAME,
-    'production' => 'mysql://'.DB_USER.':'.DB_PASSWORD.'@'.DB_HOST.'/'.DB_NAME.'?charset=utf8'
-);
+$QdPhpactiverecords = new QdPhpactiverecords();
 
-# must issue a "use" statement in your closure if passing variables
-ActiveRecord\Config::initialize(function($cfg) use ($connections)
+
+//must issue a "use" statement in your closure if passing variables
+/*
+$conn = QdPhpactiverecords::getCon();
+ActiveRecord\Config::initialize(function($cfg) use ($conn)
 {
-    /*
-    $model_dir = QD_PLUGIN_DIR.'src/models';
+
+    $model_dir = QdPhpactiverecords::getPluginDirPath().'models';
     $cfg->set_model_directory($model_dir);
-    $cfg->set_connections($connections);
+    $cfg->set_connections($conn);
 
     # default connection is now production
     $cfg->set_default_connection('production');
-    */
+
 });
+echo QdRoot::first()->name;
+*/
+//Tested Work OK here
+
